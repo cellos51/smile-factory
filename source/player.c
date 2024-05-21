@@ -4,7 +4,7 @@
 
 static const int body_tid_lut[8][4] =
 {
-    {0, 32, 0, 64},
+    {32, 32, 0, 64},
     {96, 128, 96, 160},
     {192, 224, 192, 256},
     {288, 320, 288, 352},
@@ -13,18 +13,6 @@ static const int body_tid_lut[8][4] =
     {192, 224, 192, 256},
     {96, 128, 96, 160}
 };
-
-// static const int head_tid_lut[8][4] =
-// {
-//     {480, 480, 480, 480},
-//     {488, 488, 488, 488},
-//     {496, 496, 496, 496},
-//     {504, 504, 504, 504},
-//     {512, 512, 512, 512},
-//     {520, 520, 520, 520},
-//     {528, 528, 528, 528},
-//     {536, 536, 536, 536}
-// };
 
 static const int head_tid_lut[8][4] = // genuinely fuck my partner for making the sprite layout this way
 {
@@ -74,8 +62,12 @@ void player_update(Player *player)
         animate = (animate + 1) % 4; // 4 frames per animation
     }
 
+    static int last_movement = 1;
+
     if (movement != 0)
     {
+        last_movement = movement;
+
         player->body.tid = body_tid_lut[movement - 1][animate];
         player->head.tid = head_tid_lut[movement - 1][animate];
 
@@ -89,6 +81,11 @@ void player_update(Player *player)
             player->body.obj->attr1 &= ~ATTR1_HFLIP;
             player->head.obj->attr1 &= ~ATTR1_HFLIP;
         }
+    }
+    else
+    {
+        player->body.tid = body_tid_lut[last_movement - 1][0];
+        player->head.tid = head_tid_lut[last_movement - 1][0];
     }
 
     switch (movement)
