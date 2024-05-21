@@ -1,7 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "tonc.h"
+#include <tonc.h>
 
 #include "sprite.h"
 
@@ -12,7 +12,7 @@ typedef struct
     Sprite head;
 
     // attributes
-    FIXED  x, y;
+    POINT position;
     FIXED hSpeed;
 	FIXED vSpeed;
 	FIXED diagonalHSpeed;

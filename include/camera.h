@@ -1,22 +1,21 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "tonc.h"
-#include "util.h"
+#include <tonc.h>
 
 void camera_init();
 void camera_update();
 
-Vector2i get_camera();
-Vector2fx get_camera_fx();
+POINT get_camera();
+POINT get_camera_fx();
 
-void set_camera(int x, int y);
+void set_camera(FIXED x, FIXED y);
 void set_camera_offset(int x, int y);
 void set_camera_delay(int delay);
-void set_camera_target(int* target_x, int* target_y);
+void set_camera_target(POINT* target);
 void remove_camera_target();
 
-void move_camera(int x, int y);
+void move_camera(FIXED x, FIXED y);
 void move_camera_offset(int x, int y);
 
 #endif // CAMERA_H

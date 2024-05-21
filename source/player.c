@@ -1,6 +1,12 @@
 #include "player.h"
 #include "camera.h"
-#include "util.h"
+
+static const int movement_lut[3][3] = 
+{
+	{6, 7, 8},
+	{5, 0, 1},
+	{4, 3, 2}
+};
 
 static const int body_tid_lut[8][4] =
 {
@@ -40,8 +46,8 @@ void player_init(Player *player, OBJ_ATTR *obj_buffer, u32 tid, u32 pid)
     initSprite32x32(&player->body, player->body.obj, player->body.tid, player->body.pid);
     initSprite16x8(&player->head, player->head.obj, player->head.tid, player->head.pid);
 
-    player->x = SCREEN_WIDTH / 2;
-    player->y = SCREEN_HEIGHT / 2;
+    player->position.x = SCREEN_WIDTH / 2;
+    player->position.y = SCREEN_HEIGHT / 2;
 
     player->hSpeed = float2fx(1.0f);
     player->vSpeed = float2fx(1.0f);
@@ -94,47 +100,47 @@ void player_update(Player *player)
         // do nothing if no movement
         break;
     case 1:
-        player->y = fxadd(player->y, player->vSpeed);
+        player->position.y = fxadd(player->position.y, player->vSpeed);
         break;
     case 2:
-        player->x = fxadd(player->x, player->diagonalHSpeed);
-        player->y = fxadd(player->y, player->diagonalVSpeed);
+        player->position.x = fxadd(player->position.x, player->diagonalHSpeed);
+        player->position.y = fxadd(player->position.y, player->diagonalVSpeed);
         break;
     case 3:
-        player->x = fxadd(player->x, player->hSpeed);
+        player->position.x = fxadd(player->position.x, player->hSpeed);
         break;
     case 4:
-        player->x = fxadd(player->x, player->diagonalHSpeed);
-        player->y = fxadd(player->y, -player->diagonalVSpeed);
+        player->position.x = fxadd(player->position.x, player->diagonalHSpeed);
+        player->position.y = fxadd(player->position.y, -player->diagonalVSpeed);
         break;
     case 5:
-        player->y = fxadd(player->y, -player->vSpeed);
+        player->position.y = fxadd(player->position.y, -player->vSpeed);
         break;
     case 6:
-        player->x = fxadd(player->x, -player->diagonalHSpeed);
-        player->y = fxadd(player->y, -player->diagonalVSpeed);
+        player->position.x = fxadd(player->position.x, -player->diagonalHSpeed);
+        player->position.y = fxadd(player->position.y, -player->diagonalVSpeed);
         break;
     case 7:
-        player->x = fxadd(player->x, -player->hSpeed);
+        player->position.x = fxadd(player->position.x, -player->hSpeed);
         break;
     case 8:
-        player->x = fxadd(player->x, -player->diagonalHSpeed);
-        player->y = fxadd(player->y, player->diagonalVSpeed);
+        player->position.x = fxadd(player->position.x, -player->diagonalHSpeed);
+        player->position.y = fxadd(player->position.y, player->diagonalVSpeed);
         break;
     }
 }
 
 void player_draw(Player *player)
 {
-    Vector2fx camera = get_camera_fx();
+    POINT camera = get_camera();
 
-    int ix, iy;
-    ix = fx2int(player->x - camera.x);
-    iy = fx2int(player->y - camera.y);
+    int x, y;
+    x = fx2int(player->position.x) - camera.x;
+    y = fx2int(player->position.y) - camera.y;
 
     player->body.obj->attr2 = ATTR2_BUILD(player->body.tid, player->body.pid, 0);
     player->head.obj->attr2 = ATTR2_BUILD(player->head.tid, player->head.pid, 0);
 
-    obj_set_pos(player->body.obj, ix, iy);
-    obj_set_pos(player->head.obj, ix + 8, iy - 8);
+    obj_set_pos(player->body.obj, x, y);
+    obj_set_pos(player->head.obj, x + 8, y - 8);
 }

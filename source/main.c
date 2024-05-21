@@ -3,7 +3,6 @@
 #include <math.h>
 
 #include "camera.h"
-#include "util.h"
 
 // objects
 #include "player.h"
@@ -36,7 +35,7 @@ void init()
 
 	player_init(&player, obj_buffer, 0, 0);
 	camera_init();
-	set_camera_target(&player.x, &player.y);
+	set_camera_target(&player.position);
 	set_camera_offset((SCREEN_WIDTH - 32) / 2, (SCREEN_HEIGHT - 32) / 2);
 	set_camera_delay(16);
 }
@@ -52,7 +51,7 @@ void draw()
 {
 	player_draw(&player);
 
-	Vector2i camera = get_camera();
+	POINT camera = get_camera();
 	REG_BG0HOFS = camera.x;
 	REG_BG0VOFS = camera.y;
 

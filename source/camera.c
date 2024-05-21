@@ -3,10 +3,9 @@
 
 typedef struct 
 {
-    FIXED fx, fy;
-    int x, y;
-    int offset_x, offset_y;
-    FIXED* target_x, *target_y;
+    POINT position; // fixed
+    POINT offset; // int
+    POINT* target; // fixed
     int delay;
 } Camera;
 
@@ -14,55 +13,43 @@ Camera camera;
 
 void camera_init()
 {
-    camera.fx = int2fx(0); // fx and fy are the camera's position and x and y are the camera's goal position
-    camera.fy = int2fx(0);
-    camera.x = 0;
-    camera.y = 0;
-    camera.offset_x = 0;
-    camera.offset_y = 0;
+    camera.position = (POINT){0, 0};
+    camera.offset = (POINT){0, 0};
+    camera.target = NULL;
     camera.delay = 1;
 }
 
 void camera_update()
 {
-    FIXED goal_x;
-    FIXED goal_y;
-    if (camera.target_x != NULL && camera.target_y != NULL)
+    if (camera.target != NULL)
     {
-        goal_x = *camera.target_x;
-        goal_y = *camera.target_y;
-    }   
-    else
-    {
-        goal_x = int2fx(camera.x);
-        goal_y = int2fx(camera.y);
+        camera.position.x += (camera.target->x - camera.position.x) / camera.delay;
+        camera.position.y += (camera.target->y - camera.position.y) / camera.delay;
     }
-    camera.fx += (goal_x - camera.fx) / camera.delay;
-    camera.fy += (goal_y - camera.fy) / camera.delay;
 }
 
-Vector2i get_camera()
+POINT get_camera()
 {
-    Vector2i v = {fx2int(camera.fx) - camera.offset_x, fx2int(camera.fy) - camera.offset_y};
-    return v;
+    POINT pos = {fx2int(camera.position.x) - camera.offset.x, fx2int(camera.position.y) - camera.offset.y};
+    return pos;
 }
 
-Vector2fx get_camera_fx()
+POINT get_camera_fx()
 {
-    Vector2fx v = {camera.fx - int2fx(camera.offset_x), camera.fy - int2fx(camera.offset_y)};
-    return v;
+    POINT pos = {camera.position.x - int2fx(camera.offset.x), camera.position.y - int2fx(camera.offset.y)};
+    return pos;
 }
 
-void set_camera(int x, int y)
+void set_camera(FIXED x, FIXED y)
 {
-    camera.x = x;
-    camera.y = y;
+    camera.position.x = x;
+    camera.position.y = y;
 }
 
 void set_camera_offset(int x, int y)
 {
-    camera.offset_x = x;
-    camera.offset_y = y;
+    camera.offset.x = x;
+    camera.offset.y = y;
 }
 
 void set_camera_delay(int delay)
@@ -70,27 +57,25 @@ void set_camera_delay(int delay)
     camera.delay = delay;
 }
 
-void set_camera_target(FIXED* target_x, FIXED* target_y)
+void set_camera_target(POINT* target)
 {
-    camera.target_x = target_x;
-    camera.target_y = target_y;
+    camera.target = target;
 }
 
 void remove_camera_target()
 {
-    camera.target_x = NULL;
-    camera.target_y = NULL;
+    camera.target = NULL;
 }
 
-void move_camera(int x, int y)
+void move_camera(FIXED x, FIXED y)
 {
-    camera.x += x;
-    camera.y += y;
+    camera.position.x += x;
+    camera.position.y += y;
 }
 
 void move_camera_offset(int x, int y)
 {
-    camera.offset_x += x;
-    camera.offset_y += y;
+    camera.offset.x += x;
+    camera.offset.y += y;
 }
 
